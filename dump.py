@@ -54,6 +54,7 @@ requests.packages.urllib3.disable_warnings()
 cur = start - 1
 count = 0
 limit = 5
+updateFlag = False
 while True:
     if (end == -1 and count >= limit) or (end != -1 and cur >= end):
         print('[INFO] End dumping at ID: %d' % cur)
@@ -86,19 +87,22 @@ while True:
         continue
     else:
         print(f'[INFO] ID: {cur}, name: {name}')
-        data['products'][str(cur)] = name
+        if data['products'].get(str(cur)) == None or data['products'].get(str(cur)) != name:
+            data['products'][str(cur)] = name
+            updateFlag = True
         count = 0
 
-# Sort
-data['products'] = dict(sorted(data['products'].items(), key=lambda item: int(item[0])))
-
 # Write output
-try:
-    with open(db_filename, 'w+', encoding='utf-8') as file:
-        data['genTime'] = str(int(time.time()))
-        data['productNumber'] = str(len(data['products']))
-        json.dump(data, file)
-except:
-    print('[ERROR] Error writing output.')
+if updateFlag:
+    data['products'] = dict(sorted(data['products'].items(), key=lambda item: int(item[0])))
+    try:
+        with open(db_filename, 'w+', encoding='utf-8') as file:
+            data['genTime'] = str(int(time.time()))
+            data['productNumber'] = str(len(data['products']))
+            json.dump(data, file)
+    except:
+        print('[ERROR] Error writing output.')
+    else:
+        print('[INFO] Finished writing output.')
 else:
-    print('[INFO] Finished writing output.')
+    print('[INFO] No update.')
