@@ -11,13 +11,14 @@ import requests
 print('TechBench Dump Script', '2024/12/7', 'https://techbench.betaworld.cn/', '', sep='\n')
 
 # Open JSON database
+db_filename = 'dump.json'
 db_loaded = False
 data = {}
 data['genTime'] = ''
 data['productNumber'] = ''
 data['products'] = {}
-if os.path.exists('techbench.json'):
-    with open('techbench.json', 'r', encoding='utf-8') as file:
+if os.path.exists(db_filename):
+    with open(db_filename, 'r', encoding='utf-8') as file:
         try:
             data = json.load(file)
         except:
@@ -93,7 +94,7 @@ data['products'] = dict(sorted(data['products'].items(), key=lambda item: int(it
 
 # Write output
 try:
-    with open('techbench.json', 'w+', encoding='utf-8') as file:
+    with open(db_filename, 'w+', encoding='utf-8') as file:
         data['genTime'] = str(int(time.time()))
         data['productNumber'] = str(len(data['products']))
         json.dump(data, file)
